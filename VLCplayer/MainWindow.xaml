@@ -5,8 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VLCplayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="550" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Menu>
+            <MenuItem Header="File">
+                <MenuItem Header="Open" Click="MenuItem_Open"/>
+            </MenuItem>
+        </Menu>
         
+        <Vlc:VlcControl Grid.Row="1" xmlns:Vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf" x:Name="MyControl" Background="White"/>
+        <Button Grid.Row="2" x:Name="PauseButton" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="58" Height="60" BorderThickness="0" Background="White" Click="PauseButton_Click">
+            <StackPanel>
+                <Image x:Name="PauseButtonImage" Source="pictures/pause.png" Width="auto" Height="auto"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </Window>
