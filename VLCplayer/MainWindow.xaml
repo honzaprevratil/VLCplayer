@@ -21,12 +21,41 @@
                 <MenuItem Header="Open" Click="MenuItem_Open"/>
             </MenuItem>
         </Menu>
-        
-        <Vlc:VlcControl Grid.Row="1" xmlns:Vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf" x:Name="MyControl" Background="White"/>
-        <Button Grid.Row="2" x:Name="PauseButton" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="58" Height="60" BorderThickness="0" Background="White" Click="PauseButton_Click">
-            <StackPanel>
-                <Image x:Name="PauseButtonImage" Source="pictures/pause.png" Width="auto" Height="auto"/>
-            </StackPanel>
-        </Button>
+
+        <Vlc:VlcControl Grid.Row="1" xmlns:Vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf" x:Name="MyControl" Background="Black"/>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" x:Name="PauseButton" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="58" Height="60" BorderThickness="0" Background="White" Click="PauseButton_Click">
+                <StackPanel>
+                    <Image x:Name="PauseButtonImage" Source="pictures/pause.png" Width="auto" Height="auto"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="58" Height="60" BorderThickness="0" Background="White" Click="BackwardButton_Click">
+                <StackPanel>
+                    <Image Source="pictures/backward.png" Width="auto" Height="auto"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="58" Height="60" BorderThickness="0" Background="White" Click="ForwardButton_Click">
+                <StackPanel>
+                    <Image Source="pictures/forward.png" Width="auto" Height="auto"/>
+                </StackPanel>
+            </Button>
+            <TextBlock Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding VideoTime, StringFormat={}{0:h}:{0:mm}:{0:ss}, FallbackValue=0:00}" />
+            <Slider x:Name="TimeSlider" Grid.Column="4" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="380" Value="{Binding VideoTime}" Maximum="{Binding VideoLength}"/>
+        </Grid>
     </Grid>
 </Window>
