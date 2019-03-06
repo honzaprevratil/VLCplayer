@@ -25,6 +25,7 @@ namespace VLCplayer
     public partial class MainWindow : Window
     {
         VideoVM VideoVM { get; set; } = new VideoVM();
+        bool wasPlayingBeforeDrag = false;
 
         public MainWindow()
         {
@@ -45,8 +46,7 @@ namespace VLCplayer
 
         private void MediaPlayer_LengthChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerLengthChangedEventArgs e)
         {
-            VideoVM.VideoLength = e.NewLength;
-            Debug.WriteLine(e.NewLength);
+            VideoVM.VideoLength = e.NewLength/10000;
         }
 
         private void MediaPlayer_TimeChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerTimeChangedEventArgs e)
@@ -75,14 +75,34 @@ namespace VLCplayer
             Debug.WriteLine(TimeSlider.Value);
         }
 
+        private void TimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            MyControl.MediaPlayer.Time = (long)((sender as Slider).Value);
+            if (!MyControl.MediaPlayer.IsPlaying && wasPlayingBeforeDrag)
+                PauseButton_Click(null, null);
+            wasPlayingBeforeDrag = false;
+        }
+
+        private void TimeSlider_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            if (MyControl.MediaPlayer.IsPlaying)
+            {
+                wasPlayingBeforeDrag = true;
+                PauseButton_Click(null, null);
+            }
+            MyControl.MediaPlayer.Time = (long)((sender as Slider).Value);
+        }
+
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
             MyControl.MediaPlayer.Time += 5000;
+            VideoVM.VideoTime = MyControl.MediaPlayer.Time;
         }
 
         private void BackwardButton_Click(object sender, RoutedEventArgs e)
         {
             MyControl.MediaPlayer.Time -= 5000;
+            VideoVM.VideoTime = MyControl.MediaPlayer.Time;
         }
 
         private void MenuItem_Open(object sender, RoutedEventArgs e)

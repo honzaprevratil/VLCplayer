@@ -18,6 +18,7 @@ namespace VLCplayer
             {
                 videoLength = value;
                 OnPropertyChanged("VideoLength");
+                OnPropertyChanged("VideoLengthFormat");
             }
         }
 
@@ -30,7 +31,32 @@ namespace VLCplayer
             {
                 videoTime = value;
                 OnPropertyChanged("VideoTime");
+                OnPropertyChanged("VideoTimeFormat");
             }
+        }
+
+        public string VideoTimeFormat
+        {
+            get { return FormatSeconds(videoTime); }
+        }
+        public string VideoLengthFormat
+        {
+            get { return FormatSeconds((long)videoLength); }
+        }
+
+        public string FormatSeconds(long miliseconds)
+        {
+            int seconds = (int)Math.Round((float)miliseconds / 1000);
+            string format = "";
+            if (seconds > 3599)
+            {
+                format += ((seconds - seconds % 3600) / 3600).ToString() + ":";
+                seconds = seconds % 3600;
+            }
+            int minutes = ((seconds - seconds % 60) / 60);
+            seconds = seconds % 60;
+            format += ((minutes > 9) ? minutes.ToString() : ("0" + minutes.ToString())) + ":" + ((seconds > 9) ? seconds.ToString() : ("0" + seconds.ToString()));
+            return format;
         }
 
         /* EVENT AND FUNCTION FOR EVENT */
