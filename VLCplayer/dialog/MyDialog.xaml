@@ -1,0 +1,17 @@
+﻿<Window x:Class="VLCplayer.dialog.MyDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VLCplayer.dialog"
+        mc:Ignorable="d"
+        Title="New Playlist" Height="118.664" Width="217.945">
+    <StackPanel>
+        <TextBlock Text="Enter playlist name:" Margin="5" />
+        <TextBox x:Name="ResponseTextBox" Margin="5" />
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Cancel" Click="CancelButton_Click" Width="95" Margin="5"/>
+            <Button Content="OK" Click="OKButton_Click" Width="95" Margin="5"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

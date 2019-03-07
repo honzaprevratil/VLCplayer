@@ -44,6 +44,8 @@ namespace VLCplayer
             get { return FormatSeconds((long)videoLength); }
         }
 
+        public string PlayingVideoPath { get; set; }
+
         public string FormatSeconds(long miliseconds)
         {
             int seconds = (int)Math.Round((float)miliseconds / 1000);

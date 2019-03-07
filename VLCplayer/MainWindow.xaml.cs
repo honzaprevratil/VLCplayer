@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using Path = System.IO.Path;
 using Vlc.DotNet;
 using System.Diagnostics;
+using VLCplayer.dialog;
 
 namespace VLCplayer
 {
@@ -25,6 +26,8 @@ namespace VLCplayer
     public partial class MainWindow : Window
     {
         VideoVM VideoVM { get; set; } = new VideoVM();
+        PlaylistProvider PlaylistProvider { get; set; } = new PlaylistProvider();
+
         bool wasPlayingBeforeDrag = false;
 
         public MainWindow()
@@ -41,7 +44,8 @@ namespace VLCplayer
             MyControl.MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
             MyControl.MediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
 
-            PlayVideo(new Uri(@"D:\source\repos\VLCplayer\videos\big_buck_bunny_480p_h264.mov"));
+            VideoVM.PlayingVideoPath = @"D:\source\repos\VLCplayer\videos\big_buck_bunny_480p_h264.mov";
+            PlayVideo(new Uri(VideoVM.PlayingVideoPath));
         }
 
         private void MediaPlayer_LengthChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerLengthChangedEventArgs e)
@@ -95,7 +99,7 @@ namespace VLCplayer
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            MyControl.MediaPlayer.Time += 5000;
+            MyControl.MediaPlayer.Time += 30000;
             VideoVM.VideoTime = MyControl.MediaPlayer.Time;
         }
 
@@ -118,12 +122,35 @@ namespace VLCplayer
             // Display OpenFileDialog by calling ShowDialog method 
             bool? result = dlg.ShowDialog();
 
-            // Get the selected file name and display in a TextBox 
+            // Get the selected file name and playvideo 
             if (result == true)
             {
-                Console.WriteLine(dlg.FileName);
-                PlayVideo(new Uri(dlg.FileName));
+                VideoVM.PlayingVideoPath = dlg.FileName;
+                PlayVideo(new Uri(VideoVM.PlayingVideoPath));
             }
+        }
+
+        private void MenuItem_AddToPlayList(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void MenuItem_AddToNewPlayList(object sender, RoutedEventArgs e)
+        {
+            var dialog = new MyDialog();
+
+            dialog.Owner = this;
+            MyControl.MediaPlayer.Pause();
+
+            if (dialog.ShowDialog() == true)
+            {
+                PlaylistProvider.CreateNew(dialog.ResponseText, VideoVM.PlayingVideoPath);
+                MyControl.MediaPlayer.Play();
+            }
+            else
+            {
+                MyControl.MediaPlayer.Play();
+            }
+            Debug.WriteLine(dialog.ResponseText);
         }
     }
 }

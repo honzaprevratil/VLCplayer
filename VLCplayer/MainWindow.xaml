@@ -20,6 +20,14 @@
             <MenuItem Header="File">
                 <MenuItem Header="Open" Click="MenuItem_Open"/>
             </MenuItem>
+            <MenuItem Header="Playlist">
+                <MenuItem Header="Next" IsEnabled="False"/>
+                <MenuItem Header="Previous" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="Add video to new playlist..." Click="MenuItem_AddToNewPlayList"/>
+                <MenuItem Header="Add video to playlist"  Click="MenuItem_AddToPlayList" x:Name="PlayLists"  IsEnabled="False"/>
+                <MenuItem Header="Open Playlist" IsEnabled="False"/>
+            </MenuItem>
         </Menu>
 
         <Vlc:VlcControl Grid.Row="1" xmlns:Vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf" x:Name="MyControl" Background="Black"/>
