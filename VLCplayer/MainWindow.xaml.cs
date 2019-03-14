@@ -27,6 +27,7 @@ namespace VLCplayer
     {
         VideoVM VideoVM { get; set; } = new VideoVM();
         PlaylistProvider PlaylistProvider { get; set; } = new PlaylistProvider();
+        private List<MenuItem> DynamicGrid { get; set; }
 
         bool wasPlayingBeforeDrag = false;
 
@@ -46,11 +47,46 @@ namespace VLCplayer
 
             VideoVM.PlayingVideoPath = @"D:\source\repos\VLCplayer\videos\big_buck_bunny_480p_h264.mov";
             PlayVideo(new Uri(VideoVM.PlayingVideoPath));
+
+            GenerateGrid();
+        }
+
+        private void GenerateGrid()
+        {
+            foreach (string ListName in PlaylistProvider.PlayLists)
+            {
+                MenuItem MenuItem1 = new MenuItem
+                {
+                    Header = ListName
+                };
+                MenuItem1.Click += MenuItem_AddToPlayList;
+
+                MenuItem MenuItem2 = new MenuItem
+                {
+                    Header = ListName
+                };
+                MenuItem2.Click += MenuItem_OpenPlayList;
+
+                addVideoTItem.Items.Add(MenuItem1);
+                openPlaylistItem.Items.Add(MenuItem2);
+            }
+
+            if (PlaylistProvider.PlayLists.Count > 1)
+            {
+                addVideoTItem.IsEnabled = true;
+                openPlaylistItem.IsEnabled = true;
+            }
+            else
+            {
+                addVideoTItem.IsEnabled = false;
+                openPlaylistItem.IsEnabled = false;
+            }
+
         }
 
         private void MediaPlayer_LengthChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerLengthChangedEventArgs e)
         {
-            VideoVM.VideoLength = e.NewLength/10000;
+            VideoVM.VideoLength = e.NewLength / 10000;
         }
 
         private void MediaPlayer_TimeChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerTimeChangedEventArgs e)
@@ -60,6 +96,7 @@ namespace VLCplayer
 
         public void PlayVideo(Uri UriOfVideo)
         {
+            VideoVM.PlayingVideoPath = UriOfVideo.OriginalString;
             MyControl.MediaPlayer.Play(UriOfVideo);
         }
 
@@ -132,6 +169,13 @@ namespace VLCplayer
 
         private void MenuItem_AddToPlayList(object sender, RoutedEventArgs e)
         {
+            PlaylistProvider.AddToPlayList((sender as MenuItem).Header.ToString(), VideoVM.PlayingVideoPath);
+        }
+
+        private void MenuItem_OpenPlayList(object sender, RoutedEventArgs e)
+        {
+            VideoClass VideoToPlay = PlaylistProvider.Load((sender as MenuItem).Header.ToString());
+            PlayVideo(new Uri(VideoToPlay.Path));
         }
 
         private void MenuItem_AddToNewPlayList(object sender, RoutedEventArgs e)
@@ -151,6 +195,20 @@ namespace VLCplayer
                 MyControl.MediaPlayer.Play();
             }
             Debug.WriteLine(dialog.ResponseText);
+        }
+
+        private void MenuItem_Next(object sender, RoutedEventArgs e)
+        {
+            if (PlaylistProvider.CurrentVideoIndex < PlaylistProvider.CurrentPlaylist.Count - 1)
+            {
+                PlaylistProvider.CurrentVideoIndex++;
+                PlayVideo(new Uri (PlaylistProvider.CurrentPlaylist[PlaylistProvider.CurrentVideoIndex].Path));
+            }
+        }
+
+        private void MenuItem_Previous(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

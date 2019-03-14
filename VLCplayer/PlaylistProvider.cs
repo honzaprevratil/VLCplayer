@@ -11,7 +11,8 @@ namespace VLCplayer
     public class PlaylistProvider
     {
         public List<VideoClass> CurrentPlaylist { get; set; } = new List<VideoClass>();
-        public string CurrentPlaylistName;
+        public string CurrentPlaylistName { get; set; }
+        public int CurrentVideoIndex { get; set; }
 
         public List<string> PlayLists { get; set; } = new List<string>();
 
@@ -26,9 +27,26 @@ namespace VLCplayer
         {
             VideoClass video = new VideoClass() { Path = VideoPath };
 
+            CurrentPlaylistName = PlaylistName;
+
             string PlayListPath = PlayListsPaths + PlaylistName + ".csv";
             // save playlist to csv file
             Convertor.Write(PlayListPath, new List<VideoClass>() { video });
+        }
+
+        public void AddToPlayList(string PlaylistName, string VideoPath)
+        {
+            VideoClass video = new VideoClass() { Path = VideoPath };
+
+            string PlayListPath = PlayListsPaths + PlaylistName + ".csv";
+
+            // read from playlist from csv
+            List<VideoClass> videoList = Convertor.Read<VideoClass>(PlayListPath);
+
+            videoList.Add(video);
+
+            // save playlist to csv file
+            Convertor.Write(PlayListPath, videoList);
         }
 
         public void LoadAllLists()
@@ -52,6 +70,8 @@ namespace VLCplayer
         {
             string PlayListPath = PlayListsPaths + PlaylistName + ".csv";
             CurrentPlaylist = Convertor.Read<VideoClass>(PlayListPath);
+
+            CurrentPlaylistName = PlaylistName;
 
             if (CurrentPlaylist.Count > 0)
                 return CurrentPlaylist[0];

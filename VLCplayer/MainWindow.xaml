@@ -17,17 +17,23 @@
         </Grid.ColumnDefinitions>
 
         <Menu>
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
             <MenuItem Header="File">
                 <MenuItem Header="Open" Click="MenuItem_Open"/>
             </MenuItem>
             <MenuItem Header="Playlist">
-                <MenuItem Header="Next" IsEnabled="False"/>
-                <MenuItem Header="Previous" IsEnabled="False"/>
+                <MenuItem x:Name="Next" Header="Next" Click="MenuItem_Next"/>
+                <MenuItem Header="Previous" Click="MenuItem_Previous"/>
                 <Separator />
                 <MenuItem Header="Add video to new playlist..." Click="MenuItem_AddToNewPlayList"/>
-                <MenuItem Header="Add video to playlist"  Click="MenuItem_AddToPlayList" x:Name="PlayLists"  IsEnabled="False"/>
-                <MenuItem Header="Open Playlist" IsEnabled="False"/>
+                <MenuItem x:Name="addVideoTItem" Header="Add video to playlist"  Click="MenuItem_AddToPlayList" IsEnabled="False"/>
+                <MenuItem x:Name="openPlaylistItem" Header="Open Playlist" IsEnabled="False"/>
             </MenuItem>
+            <MenuItem HorizontalAlignment="Right" x:Name="PlayingInfo" Header="Playing: none video list" IsEnabled="False"/>
         </Menu>
 
         <Vlc:VlcControl Grid.Row="1" xmlns:Vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf" x:Name="MyControl" Background="Black"/>
