@@ -60,6 +60,7 @@ namespace VLCplayer
 
             DirectoryInfo d = new DirectoryInfo(PlayListsPaths);
             FileInfo[] Files = d.GetFiles("*.csv"); //Getting CSV files
+            PlayLists.Clear();
             foreach (FileInfo file in Files)
             {
                 PlayLists.Add(file.Name.Substring( 0, (file.Name.Length - 4) ));
@@ -72,6 +73,8 @@ namespace VLCplayer
             CurrentPlaylist = Convertor.Read<VideoClass>(PlayListPath);
 
             CurrentPlaylistName = PlaylistName;
+
+            CurrentVideoIndex = 0;
 
             if (CurrentPlaylist.Count > 0)
                 return CurrentPlaylist[0];

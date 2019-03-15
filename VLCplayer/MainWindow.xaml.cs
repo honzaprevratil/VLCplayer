@@ -30,6 +30,7 @@ namespace VLCplayer
         private List<MenuItem> DynamicGrid { get; set; }
 
         bool wasPlayingBeforeDrag = false;
+        static string[] mediaExtensions = { ".mov", ".mp4" };
 
         public MainWindow()
         {
@@ -45,14 +46,16 @@ namespace VLCplayer
             MyControl.MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
             MyControl.MediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
 
-            VideoVM.PlayingVideoPath = @"D:\source\repos\VLCplayer\videos\big_buck_bunny_480p_h264.mov";
-            PlayVideo(new Uri(VideoVM.PlayingVideoPath));
-
+            //VideoVM.PlayingVideoPath = @"D:\source\repos\VLCplayer\videos\big_buck_bunny_480p_h264.mov";
+            //PlayVideo(new Uri(VideoVM.PlayingVideoPath));
             GenerateGrid();
         }
 
         private void GenerateGrid()
         {
+            addVideoTItem.Items.Clear();
+            openPlaylistItem.Items.Clear();
+
             foreach (string ListName in PlaylistProvider.PlayLists)
             {
                 MenuItem MenuItem1 = new MenuItem
@@ -97,7 +100,10 @@ namespace VLCplayer
         public void PlayVideo(Uri UriOfVideo)
         {
             VideoVM.PlayingVideoPath = UriOfVideo.OriginalString;
-            MyControl.MediaPlayer.Play(UriOfVideo);
+            if (IsMediaFile(UriOfVideo.OriginalString))
+            {
+                MyControl.MediaPlayer.Play(UriOfVideo);
+            }
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
@@ -136,14 +142,20 @@ namespace VLCplayer
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            MyControl.MediaPlayer.Time += 30000;
-            VideoVM.VideoTime = MyControl.MediaPlayer.Time;
+            if (VideoVM.VideoLength > MyControl.MediaPlayer.Time + 30000)
+            {
+                MyControl.MediaPlayer.Time += 30000;
+                VideoVM.VideoTime = MyControl.MediaPlayer.Time;
+            }
         }
 
         private void BackwardButton_Click(object sender, RoutedEventArgs e)
         {
-            MyControl.MediaPlayer.Time -= 5000;
-            VideoVM.VideoTime = MyControl.MediaPlayer.Time;
+            if (MyControl.MediaPlayer.Time >= 5000)
+            {
+                MyControl.MediaPlayer.Time -= 5000;
+                VideoVM.VideoTime = MyControl.MediaPlayer.Time;
+            }
         }
 
         private void MenuItem_Open(object sender, RoutedEventArgs e)
@@ -164,18 +176,24 @@ namespace VLCplayer
             {
                 VideoVM.PlayingVideoPath = dlg.FileName;
                 PlayVideo(new Uri(VideoVM.PlayingVideoPath));
+                PlayingInfo.Header = "Playing: none video list";
             }
+            RenderNextAndPrevious();
         }
 
         private void MenuItem_AddToPlayList(object sender, RoutedEventArgs e)
         {
             PlaylistProvider.AddToPlayList((sender as MenuItem).Header.ToString(), VideoVM.PlayingVideoPath);
+            RenderNextAndPrevious();
         }
 
         private void MenuItem_OpenPlayList(object sender, RoutedEventArgs e)
         {
-            VideoClass VideoToPlay = PlaylistProvider.Load((sender as MenuItem).Header.ToString());
+            string PlayListName = (sender as MenuItem).Header.ToString();
+            VideoClass VideoToPlay = PlaylistProvider.Load(PlayListName);
             PlayVideo(new Uri(VideoToPlay.Path));
+            RenderNextAndPrevious();
+            PlayingInfo.Header = "Playing: " + PlayListName + " [1/" + PlaylistProvider.CurrentPlaylist.Count + "]";
         }
 
         private void MenuItem_AddToNewPlayList(object sender, RoutedEventArgs e)
@@ -195,6 +213,9 @@ namespace VLCplayer
                 MyControl.MediaPlayer.Play();
             }
             Debug.WriteLine(dialog.ResponseText);
+            RenderNextAndPrevious();
+            PlaylistProvider.LoadAllLists();
+            GenerateGrid();
         }
 
         private void MenuItem_Next(object sender, RoutedEventArgs e)
@@ -204,11 +225,42 @@ namespace VLCplayer
                 PlaylistProvider.CurrentVideoIndex++;
                 PlayVideo(new Uri (PlaylistProvider.CurrentPlaylist[PlaylistProvider.CurrentVideoIndex].Path));
             }
+            RenderNextAndPrevious();
         }
 
         private void MenuItem_Previous(object sender, RoutedEventArgs e)
         {
+            if (PlaylistProvider.CurrentVideoIndex > 0)
+            {
+                PlaylistProvider.CurrentVideoIndex--;
+                PlayVideo(new Uri(PlaylistProvider.CurrentPlaylist[PlaylistProvider.CurrentVideoIndex].Path));
+            }
+            RenderNextAndPrevious();
+        }
 
+        private void RenderNextAndPrevious()
+        {
+            if (PlaylistProvider.CurrentVideoIndex == 0)
+                Previous.IsEnabled = false;
+            else
+                Previous.IsEnabled = true;
+
+            if (PlaylistProvider.CurrentVideoIndex == PlaylistProvider.CurrentPlaylist.Count - 1)
+                Next.IsEnabled = false;
+            else
+                Next.IsEnabled = true;
+
+            PlayingInfo.Header = "Playing: " + PlaylistProvider.CurrentPlaylistName + " [" + (PlaylistProvider.CurrentVideoIndex + 1) + "/" + PlaylistProvider.CurrentPlaylist.Count + "]";
+        }
+
+        static bool IsMediaFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                return -1 != Array.IndexOf(mediaExtensions, Path.GetExtension(path).ToLower());
+            }
+            else
+                return false;
         }
     }
 }

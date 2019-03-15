@@ -26,11 +26,11 @@
                 <MenuItem Header="Open" Click="MenuItem_Open"/>
             </MenuItem>
             <MenuItem Header="Playlist">
-                <MenuItem x:Name="Next" Header="Next" Click="MenuItem_Next"/>
-                <MenuItem Header="Previous" Click="MenuItem_Previous"/>
+                <MenuItem x:Name="Next" Header="Next" Click="MenuItem_Next" IsEnabled="False"/>
+                <MenuItem x:Name="Previous" Header="Previous" Click="MenuItem_Previous" IsEnabled="False"/>
                 <Separator />
                 <MenuItem Header="Add video to new playlist..." Click="MenuItem_AddToNewPlayList"/>
-                <MenuItem x:Name="addVideoTItem" Header="Add video to playlist"  Click="MenuItem_AddToPlayList" IsEnabled="False"/>
+                <MenuItem x:Name="addVideoTItem" Header="Add video to playlist" IsEnabled="False"/>
                 <MenuItem x:Name="openPlaylistItem" Header="Open Playlist" IsEnabled="False"/>
             </MenuItem>
             <MenuItem HorizontalAlignment="Right" x:Name="PlayingInfo" Header="Playing: none video list" IsEnabled="False"/>
